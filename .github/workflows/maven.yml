@@ -72,7 +72,7 @@ jobs:
 
       # Step 9: Process Test Reports
       - name: Process Test Reports
-        uses: dorny/test-reporter@v2
+        uses: dorny/test-reporter@v1.91
         if: success() || failure()
         with:
           name: Test Results
