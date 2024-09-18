@@ -34,7 +34,11 @@ jobs:
       - name: Run tests with Maven
         run: mvn test
 
-      # Step 5: Sonar Code Analysis
+      # Step 5: Coverage per Test Execution
+      - name: Coverage per Test Execution
+        run: mvn org.jacoco:jacoco-maven-plugin:prepare-agent install -Pcoverage-per-test
+
+      # Step 6: Sonar Code Analysis
       - name: Sonar Code Analysis
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -48,19 +52,25 @@ jobs:
 
       # Step 7: Upload Target Folder
       - name: Upload target folder
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v2
         with:
           name: target
           path: |
             ${{ github.workspace }}/target
-            ${{ github.workspace }}/reports          
+            ${{ github.workspace }}/reports
 
-      # Step 6: Upload Test Report
-      - name: Test Report
+      # Step 8: Upload Test Reports
+      - name: Upload Test Reports
+        uses: actions/upload-artifact@v2
+        with:
+          name: test-reports
+          path: ${{ github.workspace }}/target/surefire-reports
+
+      # Step 9: Process Test Reports
+      - name: Process Test Reports
         uses: dorny/test-reporter@v1
         if: success() || failure()
         with:
           name: Test Results
           path: ${{ github.workspace }}/target/surefire-reports/TEST-TestSuite.xml
           reporter: java-junit
-          java-version: 22
