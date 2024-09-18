@@ -39,11 +39,12 @@ jobs:
       - name: Run tests with Maven
         run: mvn test
 
-      # Step 5: Sonar Code Analysis
       - name: Sonar Code Analysis
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
-            -Dsonar.projectKey=felixroden_2IS224-26068
+            -Dsonar.projectKey=felixroden_2IS224-26068 \
+            -Dsonar.host.url=https://sonarcloud.io \
+            -Dsonar.login=$SONAR_TOKEN
