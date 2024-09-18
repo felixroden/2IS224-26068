@@ -46,6 +46,15 @@ jobs:
             -Dsonar.login=$SONAR_TOKEN \
             -Dsonar.organization=felixroden
 
+      # Step 7: Upload Target Folder
+      - name: Upload target folder
+        uses: actions/upload-artifact@v2
+        with:
+          name: target
+          path: |
+            ${{ github.workspace }}/target
+            ${{ github.workspace }}/reports          
+
       # Step 6: Upload Test Report
       - name: Test Report
         uses: dorny/test-reporter@v1
