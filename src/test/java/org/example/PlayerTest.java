@@ -18,6 +18,7 @@ class PlayerTest {
         this.gameRules = new GameRules(this.totalPlayers, this.divider, this.playUntil);
     }
 
+    // TESTING
     @Test
     void playerPoint() {
         for(int i = 1; i < 3; ++i) {
