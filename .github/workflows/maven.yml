@@ -43,7 +43,7 @@ jobs:
       - name: SonarQube Code Analysis
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
+        run: mvn verify sonar:sonar \
           -Dsonar.projectKey=felixroden_2IS224-26068 \
           -Dsonar.host.url=https://sonarcloud.io \
           -Dsonar.login=$SONAR_TOKEN
