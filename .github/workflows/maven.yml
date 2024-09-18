@@ -38,3 +38,11 @@ jobs:
       # Step 4: Run tests with Maven
       - name: Run tests with Maven
         run: mvn test
+
+      # Step 5: Run Checkstyle analysis
+      - name: Run Checkstyle analysis
+        run: mvn checkstyle:check
+
+      # Step 6: Run PMD analysis
+      - name: Run PMD analysis
+        run: mvn pmd:pmd
