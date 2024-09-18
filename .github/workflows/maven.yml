@@ -34,43 +34,24 @@ jobs:
       - name: Run tests with Maven
         run: mvn test
 
-      # Debugging: List files in target directory
-      - name: List files in target directory
-        run: ls -R ${{ github.workspace }}/target
-
-      # Step 5: Coverage per Test Execution
-      - name: Coverage per Test Execution
-        run: mvn org.jacoco:jacoco-maven-plugin:prepare-agent install -Pcoverage-per-test
-
-      # Step 6: Sonar Code Analysis
-      - name: Sonar Code Analysis
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      # Step 5: List directories and files for troubleshooting
+      - name: List directories and files
         run: |
-          mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
-            -Dsonar.projectKey=felixroden_2IS224-26068 \
-            -Dsonar.host.url=https://sonarcloud.io \
-            -Dsonar.login=$SONAR_TOKEN \
-            -Dsonar.organization=felixroden
+          echo "Listing root directory:"
+          ls -R $GITHUB_WORKSPACE
+          echo "Listing target directory:"
+          ls -R $GITHUB_WORKSPACE/target
+          echo "Listing surefire-reports directory:"
+          ls -R $GITHUB_WORKSPACE/target/surefire-reports
 
-      # Step 7: Upload Target Folder
-      - name: Upload target folder
-        uses: actions/upload-artifact@v4
-        with:
-          name: target
-          path: |
-            ${{ github.workspace }}/target
-            ${{ github.workspace }}/reports
-
-      # Step 8: Upload Test Reports
+      # Step 6: Upload Test Reports
       - name: Upload Test Reports
         uses: actions/upload-artifact@v4
         with:
           name: test-reports
           path: ${{ github.workspace }}/target/surefire-reports
 
-      # Step 9: Process Test Reports
+      # Step 7: Process Test Reports
       - name: Process Test Reports
         uses: dorny/test-reporter@v1
         if: success() || failure()
