@@ -34,15 +34,16 @@ jobs:
       # Step 3: Build the project with Maven
       - name: Build with Maven
         run: mvn -B package --file pom.xml
-        
+
       # Step 4: Run tests with Maven
       - name: Run tests with Maven
         run: mvn test
 
-      # Step 5: Run Checkstyle analysis
-      - name: Run Checkstyle analysis
-        run: mvn checkstyle:check
-
-      # Step 6: Run PMD analysis
-      - name: Run PMD analysis
-        run: mvn pmd:pmd
+      # Step 5: SonarQube Analysis
+      - name: SonarQube Scan
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: mvn sonar:sonar \
+          -Dsonar.projectKey=<YOUR_PROJECT_KEY> \
+          -Dsonar.host.url=https://sonarcloud.io \
+          -Dsonar.login=$SONAR_TOKEN
