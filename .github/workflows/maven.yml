@@ -34,6 +34,10 @@ jobs:
       - name: Run tests with Maven
         run: mvn test
 
+      # Debugging: List files in target directory
+      - name: List files in target directory
+        run: ls -R ${{ github.workspace }}/target
+
       # Step 5: Coverage per Test Execution
       - name: Coverage per Test Execution
         run: mvn org.jacoco:jacoco-maven-plugin:prepare-agent install -Pcoverage-per-test
@@ -52,7 +56,7 @@ jobs:
 
       # Step 7: Upload Target Folder
       - name: Upload target folder
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: target
           path: |
@@ -61,14 +65,14 @@ jobs:
 
       # Step 8: Upload Test Reports
       - name: Upload Test Reports
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: test-reports
           path: ${{ github.workspace }}/target/surefire-reports
 
       # Step 9: Process Test Reports
       - name: Process Test Reports
-        uses: dorny/test-reporter@v1
+        uses: dorny/test-reporter@v2
         if: success() || failure()
         with:
           name: Test Results
