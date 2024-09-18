@@ -39,6 +39,7 @@ jobs:
       - name: Run tests with Maven
         run: mvn test
 
+      # Step 5: Sonar Code Analysis
       - name: Sonar Code Analysis
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
