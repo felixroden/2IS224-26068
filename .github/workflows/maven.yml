@@ -125,26 +125,27 @@ jobs:
         run: |
           mvn test jacoco:report
 
-      # Step 4: Add coverage to PR
+      # Step 4: Debug - List files to find the report
+      - name: List files in target
+        run: find . -name "*.xml"
+
+      # Step 5: Add coverage to PR
       - name: Add coverage to PR
         id: jacoco
         uses: madrapps/jacoco-report@v1.7.1
         with:
           paths: |
-            ${{ github.workspace }}/**/build/reports/jacoco/prodNormalDebugCoverage/prodNormalDebugCoverage.xml,
-            ${{ github.workspace }}/**/build/reports/jacoco/**/debugCoverage.xml
+            ${{ github.workspace }}/target/site/jacoco/jacoco.xml  # Update this path if needed
           token: ${{ secrets.GITHUB_TOKEN }}
           min-coverage-overall: 40
           min-coverage-changed-files: 60
 
-
-
-      # generates coverage-report.md and publishes as checkrun
+      # Step 6: JaCoCo Code Coverage Report
       - name: JaCoCo Code Coverage Report
         id: jacoco_reporter
         uses: PavanMudigonda/jacoco-reporter@v5.0
         with:
-          coverage_results_path: jacoco-report/test.xml
+          coverage_results_path: target/site/jacoco/jacoco.xml  # Update this path if needed
           coverage_report_name: Coverage
           coverage_report_title: JaCoCo
           github_token: ${{ secrets.GITHUB_TOKEN }}
@@ -153,7 +154,7 @@ jobs:
           fail_below_threshold: false
           publish_only_summary: false
 
-      # Publish Coverage Job Summary  # Optional
+      # Step 7: Publish Coverage Job Summary (Optional)
       - name: Add Jacoco report to workflow run summary
         run: |
           echo "| Outcome | Value |" >> $GITHUB_STEP_SUMMARY
@@ -162,14 +163,11 @@ jobs:
           echo "| :heavy_check_mark: Number of Lines Covered | ${{ steps.jacoco_reporter.outputs.covered_lines }} |" >> $GITHUB_STEP_SUMMARY
           echo "| :x: Number of Lines Missed | ${{ steps.jacoco_reporter.outputs.missed_lines }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Total Number of Lines | ${{ steps.jacoco_reporter.outputs.total_lines }} |" >> $GITHUB_STEP_SUMMARY
-      # List all files to help debug the path issue
-      - name: List all files
-        run: find . -name "*.md"
-      # uploads the coverage-report.md artifact  # Optional
+
+      # Step 8: Upload Code Coverage Artifacts (Optional)
       - name: Upload Code Coverage Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: code-coverage-report-markdown
-          path: target/site/jacoco/coverage-results.md  # Correct the path here
+          path: target/site/jacoco/coverage-results.md  # Correct the path based on the debug result
           retention-days: 1
-
