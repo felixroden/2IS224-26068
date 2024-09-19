@@ -168,5 +168,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: code-coverage-report-markdown
-          path: ${{ github.workspace }}/target/jacoco-report/coverage-results.md
+          path: target/site/jacoco/coverage-results.md  # Correct the path here
           retention-days: 1
+      # List all files to help debug the path issue
+      - name: List all files
+        run: find . -name "*.md"
