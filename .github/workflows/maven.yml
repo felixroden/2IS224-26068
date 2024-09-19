@@ -162,7 +162,9 @@ jobs:
           echo "| :heavy_check_mark: Number of Lines Covered | ${{ steps.jacoco_reporter.outputs.covered_lines }} |" >> $GITHUB_STEP_SUMMARY
           echo "| :x: Number of Lines Missed | ${{ steps.jacoco_reporter.outputs.missed_lines }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Total Number of Lines | ${{ steps.jacoco_reporter.outputs.total_lines }} |" >> $GITHUB_STEP_SUMMARY
-
+      # List all files to help debug the path issue
+      - name: List all files
+        run: find . -name "*.md"
       # uploads the coverage-report.md artifact  # Optional
       - name: Upload Code Coverage Artifacts
         uses: actions/upload-artifact@v4
@@ -170,6 +172,4 @@ jobs:
           name: code-coverage-report-markdown
           path: target/site/jacoco/coverage-results.md  # Correct the path here
           retention-days: 1
-      # List all files to help debug the path issue
-      - name: List all files
-        run: find . -name "*.md"
+
