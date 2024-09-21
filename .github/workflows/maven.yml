@@ -13,6 +13,7 @@ permissions:
   statuses: write
   checks: write
   actions: write
+  security-events: write
 
 jobs:
   build-and-test:
