@@ -11,11 +11,7 @@ jobs:
     name: Build and Test
     runs-on: ubuntu-latest
     permissions:
-      pull-requests: write
-      contents: write
-      statuses: write
       checks: write
-      actions: write
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK 22
