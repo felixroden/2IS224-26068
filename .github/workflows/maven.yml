@@ -6,11 +6,6 @@ on:
   pull_request:
     branches: [main]
 
-permissions:
-  pull-requests: write
-  contents: write
-  checks: write
-
 jobs:
   build-and-test:
     name: Build and Test
