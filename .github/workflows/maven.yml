@@ -1,3 +1,4 @@
+---
 name: Java CI with Maven
 
 on:
@@ -7,6 +8,9 @@ on:
   pull_request:
     branches:
       - main
+
+env:
+  SONAR_PROJECT_KEY: felixroden_2IS224-26068  # Moved to environment variable
 
 jobs:
   # Job 1: Build and Test
@@ -39,17 +43,16 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: test-reports
-          path: ${{ github.workspace }}/target/surefire-reports
+          path: "${{ github.workspace }}/target/surefire-reports"
 
       # Step 7: Process Test Reports
       - name: Process Test Reports
         uses: dorny/test-reporter@v1
-        if: success() || failure()
+        if: ${{ success() || failure() }}
         with:
           name: Test Results
-          path: ${{ github.workspace }}/target/surefire-reports/TEST-*.xml
+          path: "${{ github.workspace }}/target/surefire-reports/TEST-*.xml"
           reporter: java-junit
-
 
   # Job 2: Sonar Analysis Job
   sonar-analysis:
@@ -58,7 +61,7 @@ jobs:
     needs: build-and-test
 
     steps:
-      # Step 1: Check out the repository code again (needed because each job runs in a fresh environment)
+      # Step 1: Check out the repository code again
       - name: Check out repository
         uses: actions/checkout@v4
 
@@ -73,14 +76,15 @@ jobs:
       # Step 3: Run Sonar code analysis using the Sonar Maven plugin
       - name: Sonar Code Analysis
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          SONAR_TOKEN: "${{ secrets.SONAR_TOKEN }}"
+          SONAR_PROJECT_KEY: "${{ env.SONAR_PROJECT_KEY }}"  # Using environment variable
         run: |
           mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
-            -Dsonar.projectKey=felixroden_2IS224-26068 \
-            -Dsonar.host.url=https://sonarcloud.io \
-            -Dsonar.login=$SONAR_TOKEN \
-            -Dsonar.organization=felixroden
+            -Dsonar.projectKey="${SONAR_PROJECT_KEY}" \
+            -Dsonar.host.url="https://sonarcloud.io" \
+            -Dsonar.login="${SONAR_TOKEN}" \
+            -Dsonar.organization="felixroden"
 
   # Job 3: Lint Code Base
   lint-code:
@@ -88,12 +92,11 @@ jobs:
     runs-on: ubuntu-latest
     needs: build-and-test
     steps:
-      # Step 1: Check out the repository code again (needed because each job runs in a fresh environment)
+      # Step 1: Check out the repository code again
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          # Full git history is needed to get a proper list of changed files within `super-linter`
-          fetch-depth: 0
+          fetch-depth: 0  # Full git history
 
       # Step 2: Lint the codebase using GitHub Super Linter
       - name: Lint Code Base
@@ -101,7 +104,7 @@ jobs:
         env:
           VALIDATE_ALL_CODEBASE: false
           DEFAULT_BRANCH: "main"
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
   # Job 4: Measure Coverage
   measure-coverage:
@@ -125,36 +128,32 @@ jobs:
         run: |
           mvn test jacoco:report
 
-      # Step 4: Debug - List files to find the report
-      - name: List files in target
-        run: find . -name "*.xml"
-
-      # Step 5: Add coverage to PR
+      # Step 4: Add coverage to PR
       - name: Add coverage to PR
         id: jacoco
         uses: madrapps/jacoco-report@v1.7.1
         with:
           paths: |
-            ${{ github.workspace }}/target/site/jacoco/jacoco.xml  # Update this path if needed
-          token: ${{ secrets.GITHUB_TOKEN }}
+            "${{ github.workspace }}/target/site/jacoco/jacoco.xml"  # Quoted path
+          token: "${{ secrets.GITHUB_TOKEN }}"
           min-coverage-overall: 40
           min-coverage-changed-files: 60
 
-      # Step 6: JaCoCo Code Coverage Report
+      # Step 5: JaCoCo Code Coverage Report
       - name: JaCoCo Code Coverage Report
         id: jacoco_reporter
         uses: PavanMudigonda/jacoco-reporter@v5.0
         with:
-          coverage_results_path: target/site/jacoco/jacoco.xml  # Update this path if needed
-          coverage_report_name: Coverage
-          coverage_report_title: JaCoCo
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          coverage_results_path: "target/site/jacoco/jacoco.xml"  # Quoted path
+          coverage_report_name: "Coverage"
+          coverage_report_title: "JaCoCo"
+          github_token: "${{ secrets.GITHUB_TOKEN }}"
           skip_check_run: false
           minimum_coverage: 80
           fail_below_threshold: false
           publish_only_summary: false
 
-      # Step 7: Publish Coverage Job Summary (Optional)
+      # Step 6: Publish Coverage Job Summary (Optional)
       - name: Add Jacoco report to workflow run summary
         run: |
           echo "| Outcome | Value |" >> $GITHUB_STEP_SUMMARY
@@ -164,10 +163,10 @@ jobs:
           echo "| :x: Number of Lines Missed | ${{ steps.jacoco_reporter.outputs.missed_lines }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Total Number of Lines | ${{ steps.jacoco_reporter.outputs.total_lines }} |" >> $GITHUB_STEP_SUMMARY
 
-      # Step 8: Upload Code Coverage Artifacts (Optional)
+      # Step 7: Upload Code Coverage Artifacts (Optional)
       - name: Upload Code Coverage Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: code-coverage-report-markdown
-          path: target/site/jacoco/coverage-results.md  # Correct the path based on the debug result
+          path: "target/site/jacoco/coverage-results.md"  # Quoted path
           retention-days: 1
