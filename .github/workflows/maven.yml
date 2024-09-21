@@ -34,7 +34,6 @@ jobs:
           name: Test Results
           path: "${{ github.workspace }}/target/surefire-reports/TEST-*.xml"
           reporter: java-junit
-
   code-quality:
     name: Code Quality Checks
     needs: build-and-test
