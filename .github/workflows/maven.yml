@@ -8,6 +8,7 @@ on:
   pull_request:
     branches:
       - main
+
 jobs:
   # Job 1: Build and Test
   build-and-test:
@@ -74,7 +75,7 @@ jobs:
         env:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
           SONAR_TOKEN: "${{ secrets.SONAR_TOKEN }}"
-          SONAR_PROJECT_KEY: "${{ env.SONAR_PROJECT_KEY }}"  # Using environment variable
+          SONAR_PROJECT_KEY: "${{ env.SONAR_PROJECT_KEY }}"
         run: |
           mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
             -Dsonar.projectKey="${SONAR_PROJECT_KEY}" \
@@ -134,35 +135,3 @@ jobs:
           token: "${{ secrets.GITHUB_TOKEN }}"
           min-coverage-overall: 40
           min-coverage-changed-files: 60
-
-      # Step 5: JaCoCo Code Coverage Report
-      - name: JaCoCo Code Coverage Report
-        id: jacoco_reporter
-        uses: PavanMudigonda/jacoco-reporter@v5.0
-        with:
-          coverage_results_path: "target/site/jacoco/jacoco.xml"  # Quoted path
-          coverage_report_name: "Coverage"
-          coverage_report_title: "JaCoCo"
-          github_token: "${{ secrets.GITHUB_TOKEN }}"
-          skip_check_run: false
-          minimum_coverage: 80
-          fail_below_threshold: false
-          publish_only_summary: false
-
-      # Step 6: Publish Coverage Job Summary (Optional)
-      - name: Add Jacoco report to workflow run summary
-        run: |
-          echo "| Outcome | Value |" >> $GITHUB_STEP_SUMMARY
-          echo "| --- | --- |" >> $GITHUB_STEP_SUMMARY
-          echo "| Code Coverage % | ${{ steps.jacoco_reporter.outputs.coverage_percentage }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| :heavy_check_mark: Number of Lines Covered | ${{ steps.jacoco_reporter.outputs.covered_lines }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| :x: Number of Lines Missed | ${{ steps.jacoco_reporter.outputs.missed_lines }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| Total Number of Lines | ${{ steps.jacoco_reporter.outputs.total_lines }} |" >> $GITHUB_STEP_SUMMARY
-
-      # Step 7: Upload Code Coverage Artifacts (Optional)
-      #- name: Upload Code Coverage Artifacts
-      #  uses: actions/upload-artifact@v4
-      #  with:
-      #    name: code-coverage-report-markdown
-      #    path: "target/site/jacoco/coverage-results.md"  # Quoted path
-      #    retention-days: 1
