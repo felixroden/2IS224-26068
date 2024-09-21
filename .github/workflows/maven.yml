@@ -1,4 +1,5 @@
 ---
+# TESTING EMAIL NOTIFICATIONS
 name: Java CI with Maven
 
 on:
