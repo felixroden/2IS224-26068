@@ -10,9 +10,12 @@ jobs:
   build-and-test:
     name: Build and Test
     runs-on: ubuntu-latest
-    permissions: # ny
+    permissions:
+      pull-requests: write
+      contents: write
+      statuses: write
       checks: write
-      contents: read
+      actions: write
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK 22
@@ -37,7 +40,7 @@ jobs:
           name: Test Results
           path: "${{ github.workspace }}/target/surefire-reports/TEST-*.xml"
           reporter: java-junit
-          token: ${{ secrets.GITHUB_TOKEN }} # ny
+          token: ${{ secrets.GITHUB_TOKEN }}
 
   code-quality:
     name: Code Quality Checks
