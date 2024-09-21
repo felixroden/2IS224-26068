@@ -23,7 +23,7 @@ jobs:
       - name: Run tests
         run: mvn test
       - name: Upload Test Reports
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v2
         with:
           name: test-reports
           path: "${{ github.workspace }}/target/surefire-reports"
