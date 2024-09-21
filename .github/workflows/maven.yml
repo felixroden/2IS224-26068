@@ -2,9 +2,9 @@ name: Java CI with Maven
 
 on:
   push:
-    branches: [develop]
+    branches: [main]
   pull_request:
-    branches: [develop]
+    branches: [main]
 
 jobs:
   build-and-test:
@@ -34,6 +34,7 @@ jobs:
           name: Test Results
           path: "${{ github.workspace }}/target/surefire-reports/TEST-*.xml"
           reporter: java-junit
+
   code-quality:
     name: Code Quality Checks
     needs: build-and-test
