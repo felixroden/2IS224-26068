@@ -8,10 +8,6 @@ on:
   pull_request:
     branches:
       - main
-
-env:
-  SONAR_PROJECT_KEY: felixroden_2IS224-26068  # Moved to environment variable
-
 jobs:
   # Job 1: Build and Test
   build-and-test:
