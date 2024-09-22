@@ -20,7 +20,7 @@ class GameRulesTest {
 
     @Test
     void getCurrentNumber() {
-        Assertions.assertEquals(1, this.gameRules.getCurrentNumber());
+        Assertions.assertEquals(10, this.gameRules.getCurrentNumber());
     }
 
     @Test
